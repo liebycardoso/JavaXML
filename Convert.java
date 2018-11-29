@@ -1,5 +1,4 @@
 import java.io.File;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -8,8 +7,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
-
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.w3c.dom.*;
 
 /*
@@ -17,125 +18,90 @@ import org.w3c.dom.*;
  * 6-CUSTOMER_FNAME,7-CUSTOMER_LNAME,8-ADDRESS,9-CITY,10-PROVINCE,11-COUNTRY,12-ZIPCODE,
  * 13-PROD_NUMBER,14-PROD_NAME,15-QUANTITY,16-UNIT_PRICE,17-UNIT_DISCOUNT
  */
+/**
+ * @author Lieby, Rodolfo, Valdeci
+ * @version 1.0
+ * @since 2018-11-15
+ */
 public class Convert {
 	
+	/**
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
-	
-				
+		
 		Scanner scanner = new Scanner(new File("ORDER_ITEMS.csv"));
 		scanner.nextLine(); //Skip header
-		String orderNumber = "";
-		boolean child=true;
+		
+		//Enables applications to obtain a parser that produces DOM object trees from XML documents.
 	    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = dbf.newDocumentBuilder();		
 		Document doc = docBuilder.newDocument();
+		
+		//Create element root purchase
 		Element rootElmt = doc.createElement("purchase");
 		doc.appendChild(rootElmt);
-		ArrayList<String> previewsLine = new ArrayList<String>(); 
-		previewsLine.add("0");
-		
+				
 		Element order;
 		Element item;
 		
+		ArrayList<Order> orderList = new ArrayList<>();
+		Set<String> uniqueOrder = new HashSet<String>(); 
 		
+		//Iterate all over the CSV file 
 		while (scanner.hasNextLine()) {
+			
+			//String row receive the current csv line record
 			String row = scanner.nextLine();
-			 
+
+			//The Array fields receive all columns values splited by the comma separator
 		    String[] fields = row.split(",");
-		    child = (orderNumber.equals(fields[0]));
-		    order = doc.createElement("order");
-		    			
-		    System.out.println("row:" + fields[0]);
-			System.out.println("preview:" + previewsLine.get(previewsLine.size() - 1));
-
-					    
-//		    if (!child){
-//		    	orderNumber=fields[0];		    	
-//				/*
-//				order.setAttribute("Number", fields[0]);
-//				order.setAttribute("Date", fields[1]);
-//				order.setAttribute("total_value", fields[2]);
-//				order.setAttribute("Total_Itens", fields[3]);
-//				order.setAttribute("Total_discount", fields[4]);
-//				*/
-//				//rootElmt.appendChild(order);
-//				/*
-//				Element customer = doc.createElement("Customer");
-//				customer.appendChild(doc.createTextNode("Address2"));
-//				Element fname = doc.createElement("Fname");
-//				fname.appendChild(doc.createTextNode(fields[6]));
-//				fname = doc.createElement("Lname");
-//				fname.appendChild(doc.createTextNode(fields[6]));				
-//				customer.appendChild(fname);
-//				fname = doc.createElement("Lname");
-//				fname.appendChild(doc.createTextNode(fields[7]));				
-//				customer.appendChild(fname);
-//				//customer.setAttribute("FirstName", fields[5]);
-//				//customer.setAttribute("lastName", fields[6]);
-//				order.appendChild(customer);
-//				
-//				Element shipping = doc.createElement("Shipping");
-//				shipping.appendChild(doc.createTextNode("Address2"));
-//				order.appendChild(shipping);
-//				*/
-//				//order.appendChild(item);
-//				item.setAttribute("PROD_NUMBER", fields[13]);
-//				item.setAttribute("PROD_NAME", fields[14]);
-//				item.setAttribute("QUANTITY", fields[15]);
-//				item.setAttribute("UNIT_PRICE", fields[16]);
-//				item.setAttribute("UNIT_DISCOUNT", fields[17]);
-//				//order.appendChild(item);
-//		    }else{
-//		    	//Integer.parseInt(fields[0]);
-//		    	//order.appendChild(item);
-//				item.setAttribute("PROD_NUMBER", fields[13]);
-//				item.setAttribute("PROD_NAME", fields[14]);
-//				item.setAttribute("QUANTITY", fields[15]);
-//				item.setAttribute("UNIT_PRICE", fields[16]);
-//				item.setAttribute("UNIT_DISCOUNT", fields[17]);
-//				//order.appendChild(item);
-//		    	//System.out.println(fields[0]);	    			    
-//
-//		    }
-		    if (previewsLine.get(previewsLine.size() - 1).equals(fields[0])){
-		    	System.out.println("igual:");
-		    	//order.appendChild(item);
-		    	//rootElmt.appendChild(order);
-		    	item = doc.createElement("item");
-		    	item.setAttribute("PROD_NUMBER", fields[13]);
-				item.setAttribute("PROD_NAME", fields[14]);
-				item.setAttribute("QUANTITY", fields[15]);
-				item.setAttribute("UNIT_PRICE", fields[16]);
-				item.setAttribute("UNIT_DISCOUNT", fields[17]);
+		    
+		    //orderList is a copy of csv file
+		    orderList.add(new Order(fields));
+		    
+		    //Only unique order id are stored on  uniqueOrder
+		    uniqueOrder.add(fields[0]);	    
+		}//while
+		
+		//for each order number:
+		for(String orderId: uniqueOrder){
+			
+			//Search and return only the items with the same order number
+			ArrayList<Order> filteredItems = (ArrayList<Order>) orderList //cast list to ArrayList
+					.stream() //stream the content
+					.filter(c -> c.orderId.equals(orderId))// filter order id
+					.collect(Collectors.toList()); //Transform to List object
+			
+			//Create one element order per order number
+			order = doc.createElement("order");
+			order.setAttribute("number", filteredItems.get(0).orderId);
+			order.setAttribute("date", filteredItems.get(0).orderDate);
+			order.setAttribute("total_items", filteredItems.get(0).orderTotalItems);
+			//order.setAttribute("value ", filteredItems.get(0).orderValue);
+			rootElmt.appendChild(order);
+			
+			//For each item in the order
+			for(Order s: filteredItems)
+			{	
+				//Create one element item for each item
+				item = doc.createElement("item");
+				System.out.println(s.orderId);
+				item.setAttribute("PROD_NUMBER", s.prodId);
+				item.setAttribute("PROD_NAME", s.prodName);
+				item.setAttribute("QUANTITY", s.prodQuantity);
+				item.setAttribute("UNIT_PRICE", s.prodValue);
 				order.appendChild(item);
-				
-		    }
-		    else{
-		    	rootElmt.appendChild(order);
-		    	item = doc.createElement("item");
-		    	item.setAttribute("PROD_NUMBER", fields[13]);
-				item.setAttribute("PROD_NAME", fields[14]);
-				item.setAttribute("QUANTITY", fields[15]);
-				item.setAttribute("UNIT_PRICE", fields[16]);
-				item.setAttribute("UNIT_DISCOUNT", fields[17]);
-		    	order.appendChild(item);
-		    	item = doc.createElement("item");
-		    	item.setAttribute("PROD_NUMBER", fields[13]);
-				item.setAttribute("PROD_NAME", fields[14]);
-				item.setAttribute("QUANTITY", fields[15]);
-				item.setAttribute("UNIT_PRICE", fields[16]);
-				item.setAttribute("UNIT_DISCOUNT", fields[17]);
-		    	order.appendChild(item);
-		    }
-		    //previewsLine.add(fields[0]);
 
-	    	previewsLine.add(fields[0]);
-		    
-		    
-	    	
-		    
-		    
-		}
+			}//for(Order s:
+			//itemExists.forEach(System.out::println);			
+		}//for(String orderId:
+		
+		
+		System.out.println("Tamanho csv" + orderList.size());
+		System.out.println("Tamanho unique" + uniqueOrder.size());
+		
 		scanner.close();
 		
 				
@@ -150,4 +116,5 @@ public class Convert {
 		
 		
 	}//main
+
 }//class

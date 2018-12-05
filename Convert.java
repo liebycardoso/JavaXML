@@ -29,6 +29,7 @@ public class Convert {
 	 * @param args
 	 * @throws Exception
 	 */
+	
 	public static void main(String[] args) throws Exception {
 		
 		Scanner scanner = new Scanner(new File("ORDER_ITEMS.csv"));
@@ -113,6 +114,8 @@ public class Convert {
 		StreamResult streamResult = new StreamResult(new File("P:\\lambton\\data.xml"));
 		transformer.transform(source, streamResult);
 		
+		WindowForm myWindow = new WindowForm(); 
+		myWindow.main(null);
 		
 		
 	}//main

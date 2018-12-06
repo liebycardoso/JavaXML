@@ -1,98 +1,127 @@
- import java.awt.BorderLayout;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
- import java.awt.event.ActionEvent;
- import java.awt.event.ActionListener;
- import java.io.File;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
- import javax.swing.JButton;
- import javax.swing.JDialog;
- import javax.swing.JFileChooser;
- import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class WindowForm extends JFrame{
 	
-	private static final long serialVersionUID = 1L;
-	private JSplitPane splitPaneV;
-	private JSplitPane splitPaneH;
-	private JPanel panel1;
-	private JPanel panel2;
-	private JPanel panel3;
-
+	private JPanel msgPanel;
+	private JPanel chooserPanel;
+	private JLabel smsLabel = new JLabel("CHOOSE A FILE ");
+	private JLabel fChoosedLabel = new JLabel("File choosed: ");
+	private JLabel fCreatedLabel = new JLabel("File converted: ");
+	private JLabel statusLabel = new JLabel("Status: ");
+	private String message;
+	
 	public WindowForm() {
-		setTitle("Split Pane Application");
+		// Create master Jframe
+		setTitle("JInterfaceFile");
 		setBackground(Color.gray);
 		
-		JPanel topPanel = new JPanel();
-		
-		topPanel.setLayout(new BorderLayout());
-		topPanel.setPreferredSize(new Dimension(700, 500));
-		getContentPane().add(topPanel);
-		
-		// Create the panels
-		createPanel1();
-		createPanel2();
-		createPanel3();
-		
-		// Create a splitter pane
-	    splitPaneV = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-	    topPanel.add(splitPaneV, BorderLayout.CENTER);
-	
-	    splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-	    splitPaneH.setLeftComponent(panel1);
-	    splitPaneH.setRightComponent(panel2);
-	
-	    splitPaneV.setLeftComponent(splitPaneH);
-	    splitPaneV.setRightComponent(panel3);
+		setPreferredSize(new Dimension(900,600));
+        setVisible(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new FlowLayout());
+
+        // Create the panels
+ 		createMsgPanel();
+ 		createChooserPanel();
+        
+ 		// Split panel into 2 (Message and JFileChooser)
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, msgPanel, chooserPanel);
+        getContentPane().add(splitPane);
+				
 	}
 
-	public void createPanel1() {
-	    panel1 = new JPanel();
-	    panel1.setLayout(new BorderLayout());
-	
-	    // Add some buttons
-	    panel1.add(new JButton("North"), BorderLayout.NORTH);
-	    panel1.add(new JButton("South"), BorderLayout.SOUTH);
-	    panel1.add(new JButton("East"), BorderLayout.EAST);
-	    panel1.add(new JButton("West"), BorderLayout.WEST);
-	    panel1.add(new JButton("Center"), BorderLayout.CENTER);
-	
-	}
-	
-	public void createPanel2() {
-	    panel2 = new JPanel();
-	    panel2.setLayout(new FlowLayout());
-	
-	    panel2.add(new JButton("Button 1"));
-	    panel2.add(new JButton("Button 2"));
-	    panel2.add(new JButton("Button 3"));
+	public void createMsgPanel() {
+		// Create panel that show text messages
+		
+	    msgPanel = new JPanel();
+	    msgPanel.setLayout(new GridLayout(4,1));
+	    msgPanel.setPreferredSize(new Dimension(800, 100));
+	    
+	    // Format text font
+	    smsLabel.setFont(new Font("Serif", Font.BOLD, 40));
+	    fChoosedLabel.setFont(new Font("Serif", Font.BOLD, 20));
+	    fCreatedLabel.setFont(new Font("Serif", Font.BOLD, 20));
+		statusLabel.setFont(new Font("Serif", Font.BOLD, 25));
+		statusLabel.setForeground(Color.red);
+   
+		// Add text to the panel
+	    msgPanel.add(smsLabel);
+	    msgPanel.add(fChoosedLabel);
+	    msgPanel.add(statusLabel);
+	    msgPanel.add(fCreatedLabel);
 	}
 
-	public void createPanel3() {
-		panel3 = new JPanel();
-	    panel3.setLayout(new BorderLayout());
-	    panel3.setPreferredSize(new Dimension(400, 100));
-	    panel3.setMinimumSize(new Dimension(100, 50));
-	    final JFileChooser fileChooser = new JFileChooser();
-	    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-	    panel3.add(fileChooser, BorderLayout.NORTH);
-	    fileChooser.addActionListener(new ActionListener() {
-	       public void actionPerformed(ActionEvent e) {
-	          if (e.getActionCommand().equals(JFileChooser.APPROVE_SELECTION)) {
-	             System.out.println("File selected: " + fileChooser.getSelectedFile());
-	              }
-	           }
-	        });
-	    }
+	public void createChooserPanel() {
+		
+		// Create the JFileChooser Panel
+		chooserPanel = new JPanel();
+	    chooserPanel.setLayout(new BorderLayout());
+	    chooserPanel.setPreferredSize(new Dimension(400, 400));
+	    
+	    // Create JFileChooser object
+	    final JFileChooser csvChooser = new JFileChooser();
+	    
+	    // Allows to view folders and files, but only select files
+	    csvChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+	    
+	    // Filter the file extension. Show only CSV
+	    FileFilter filter = new FileNameExtensionFilter("*.csv","csv");
+	    csvChooser.addChoosableFileFilter(filter);
+	    csvChooser.setFileFilter(filter);
+	    
+	    // Add JFileChooser to the chooserPanel
+	    chooserPanel.add(csvChooser, BorderLayout.SOUTH);
+	    
+	    // Add a listener to recognize when the button is clicked
+	    csvChooser.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+	    	
+	    	// If the Choose is hit
+	    	if (e.getActionCommand().equals(JFileChooser.APPROVE_SELECTION)) {
+	    		
+				statusLabel.setText("Status: Processing...");
+				fChoosedLabel.setText("File choosed: " + csvChooser.getSelectedFile().getName());
+				//chooserPanel.setVisible(false);
+				JInterfaceFile interfaceFile = new JInterfaceFile(csvChooser.getSelectedFile().getName());
+				statusLabel.setText("Status: conversion completed successfully");
+				fCreatedLabel.setText("File created: ");
+				try {
+					message = interfaceFile.convertFile();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+				e1.printStackTrace();
+				}// try
+		           } // if APPROVE_SELECTION
+	         }// actionPerformed
+	        });// addActionListener
+	    
+	    }//createChooserPanel
 	
 	public static void main(String args[]) {
-	// Create an instance of the test application
-		WindowForm mainFrame = new WindowForm();
-	    mainFrame.pack();
-	    mainFrame.setVisible(true);
+	// Create the instance of this application
+		WindowForm mainForm = new WindowForm();
+		mainForm.pack();
+		mainForm.setVisible(true);
+	    
 	}
 }
 	 

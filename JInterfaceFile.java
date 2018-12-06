@@ -1,20 +1,9 @@
-
-
-	
 	import java.io.File;
-	import javax.xml.parsers.DocumentBuilder;
-	import javax.xml.parsers.DocumentBuilderFactory;
-	import javax.xml.transform.Transformer;
-	import javax.xml.transform.TransformerFactory;
-	import javax.xml.transform.dom.DOMSource;
-	import javax.xml.transform.stream.StreamResult;
-
 	import java.util.ArrayList;
 	import java.util.HashSet;
 	import java.util.Scanner;
 	import java.util.Set;
 	import java.util.stream.Collectors;
-	import org.w3c.dom.*;
 
 	/*
 	 * 0-ORDER_NUMBER,1-DATE,2-TOTAL_VALUE,3-TOTAL_ITEMS,4-TOTAL_DISCOUNT,5-CUSTOMER_NUMBER,
@@ -28,7 +17,7 @@
 	 */
 	public class JInterfaceFile {
 		
-		private final String FILE_NAME;
+		private static String FILE_NAME;
 		
 		public JInterfaceFile(String fileName){
 			this.FILE_NAME = fileName;
@@ -37,34 +26,31 @@
 		public static String convertFile() throws Exception {
 			
 			String msg = "";
-			Scanner scanner = new Scanner(new File("ORDER_ITEMS.csv"));
+			Scanner scanner = new Scanner(new File(FILE_NAME));
 			scanner.nextLine(); //Skip header
 			
-			//Enables applications to obtain a parser that produces DOM object trees from XML documents.
-		    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = dbf.newDocumentBuilder();		
-			Document doc = docBuilder.newDocument();
+			// New object that parses DOM object from XML docs
+			XMLHandler xml = new XMLHandler();
 			
-			//Create element root purchase
-			Element rootElmt = doc.createElement("purchase");
-			doc.appendChild(rootElmt);
-					
-			Element order;
-			Element item;
+			// Create element Root
+			xml.addElementRoot("purchase");
 			
+			// Create list to store all CSV columns and lines
 			ArrayList<Order> orderList = new ArrayList<>();
+			
+			// Create a Set list composed by unique Orders numbers
 			Set<String> uniqueOrder = new HashSet<String>(); 
 			
 			//Iterate all over the CSV file 
 			while (scanner.hasNextLine()) {
 				
-				//String row receive the current csv line record
+				//String row receive the current CSV line record
 				String row = scanner.nextLine();
 
-				//The Array fields receive all columns values splited by the comma separator
+				//The Array fields receive all columns values splitted by the comma separator
 			    String[] fields = row.split(",");
 			    
-			    //orderList is a copy of csv file
+			    //orderList is a copy of CSV file
 			    orderList.add(new Order(fields));
 			    
 			    //Only unique order id are stored on  uniqueOrder
@@ -80,47 +66,15 @@
 						.filter(c -> c.orderId.equals(orderId))// filter order id
 						.collect(Collectors.toList()); //Transform to List object
 				
-				//Create one element order per order number
-				order = doc.createElement("order");
-				order.setAttribute("number", filteredItems.get(0).orderId);
-				order.setAttribute("date", filteredItems.get(0).orderDate);
-				order.setAttribute("total_items", filteredItems.get(0).orderTotalItems);
-				//order.setAttribute("value ", filteredItems.get(0).orderValue);
-				rootElmt.appendChild(order);
+				// Create element order and child item
+				xml.addElement("order", "item", filteredItems);
 				
-				//For each item in the order
-				for(Order s: filteredItems)
-				{	
-					//Create one element item for each item
-					item = doc.createElement("item");
-					System.out.println(s.orderId);
-					item.setAttribute("PROD_NUMBER", s.prodId);
-					item.setAttribute("PROD_NAME", s.prodName);
-					item.setAttribute("QUANTITY", s.prodQuantity);
-					item.setAttribute("UNIT_PRICE", s.prodValue);
-					order.appendChild(item);
-
-				}//for(Order s:
-				//itemExists.forEach(System.out::println);			
 			}//for(String orderId:
-			
-			
-			System.out.println("Tamanho csv" + orderList.size());
-			System.out.println("Tamanho unique" + uniqueOrder.size());
 			
 			scanner.close();
 			
-					
-			
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			
-			StreamResult streamResult = new StreamResult(new File("P:\\lambton\\data.xml"));
-			transformer.transform(source, streamResult);
-			
-			//WindowForm myWindow = new WindowForm(); 
-			//myWindow.main(null);
+			// Transform the doc object into .xml file
+			xml.streamToXML(FILE_NAME.replace(".csv", ".xml"));
 			
 			return msg;
 		};//main

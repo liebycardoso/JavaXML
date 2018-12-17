@@ -1,7 +1,19 @@
 ORDER_NUMBER,DATE,TOTAL_VALUE,TOTAL_ITEMS,TOTAL_DISCOUNT,CUSTOMER_NUMBER,CUSTOMER_FNAME,CUSTOMER_LNAME,ADDRESS,CITY,PROVINCE,COUNTRY,ZIPCODE,PROD_NUMBER,PROD_NAME,QUANTITY,UNIT_PRICE,UNIT_DISCOUNT
-1,2018-10-31,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,1,SHAMPOO A,3,10,1
-1,2018-10-31,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,4,SOAP Z,10,6,2
-1,2018-10-31,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,3,BEANS,1,5,0
-1,2018-10-31,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,5,BREAD N,2,3.5,0
-2,2018-11-01,30,1,0,2,John,Denton,10 Wilson Ave,Guelph,ON,Canada,1M12P5,2,RICE,2,15,0
-3,2018-11-02,5,1,0,3,Ruth,Malcon,15 Samuel Hearne St,York,ON,Canada,1M02H3,3,BEANS,1,5,0
+1,31/10/2018,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,1,SHAMPOO A,3,10,1
+1,31/10/2018,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,4,SOAP Z,10,6,2
+1,31/10/2018,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,3,BEANS,1,5,0
+1,31/10/2018,79,16,23,1,Alice,Miller,50 Bloor Ave,Toronto,ON,Canada,1M12L0,5,BREAD N,2,3.5,0
+2,01/11/2018,30,1,0,2,John,Denton,10 Wilson Ave,Guelph,ON,Canada,1M12P5,2,RICE,2,15,0
+3,02/11/2018,5,1,0,3,Ruth,Malcon,15 Samuel Hearne St,York,ON,Canada,1M02H3,3,BEANS,1,5,0
+4,31/10/2018,79,16,23,1,Beth,Santos,10 Albion,Toronto,ON,Canada,1M12L3,1,SHAMPOO A,3,10,1
+4,31/10/2018,79,16,23,1,Beth,Santos,11 Albion,Toronto,ON,Canada,1M12L4,4,SOAP Z,10,6,2
+4,31/10/2018,79,16,23,1,Beth,Santos,12 Albion,Toronto,ON,Canada,1M12L5,3,BEANS,1,5,0
+4,31/10/2018,79,16,23,1,Beth,Santos,13 Albion,Toronto,ON,Canada,1M12L6,5,BREAD N,2,3.5,0
+4,01/11/2018,30,1,0,2,Beth,Santos,14 Albion,Toronto,ON,Canada,1M12L7,2,RICE,2,15,0
+4,02/11/2018,5,1,0,3,Beth,Santos,15 Albion,Toronto,ON,Canada,1M12L8,3,BEANS,1,5,0
+5,31/10/2018,79,16,23,1,Kelly,Mindy,5 Queen,Toronto,ON,Canada,1B11L3,1,SHAMPOO A,3,10,1
+5,31/10/2018,79,16,23,1,Kelly,Mindy,6 Queen,Toronto,ON,Canada,1B11L4,10,MILK,10,6,2
+5,31/10/2018,79,16,23,1,Kelly,Mindy,7 Queen,Toronto,ON,Canada,1B11L5,15,CORN,1,5,0
+5,31/10/2018,79,16,23,1,Kelly,Mindy,8 Queen,Toronto,ON,Canada,1B11L6,20,CHEESE,2,3.5,0
+5,01/11/2018,30,1,0,2,Kelly,Mindy,9 Queen,Toronto,ON,Canada,1B11L7,16,BANANA,2,15,0
+5,02/11/2018,5,1,0,3,Kelly,Mindy,10 Queen,Toronto,ON,Canada,1B11L8,3,BEANS,1,5,0
